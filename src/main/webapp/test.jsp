@@ -80,20 +80,20 @@
 <div class="container">
     <div class="up-btn">
         <i data-feather="arrow-up-circle" class="icon"></i>
-        <a href="?path=${path.replace('\\', '/').substring(0, path.lastIndexOf("\\"))}/">Наверх/</a><br>
+        <a href="?path=${requestScope.path.replace('\\', '/').substring(0,requestScope.path.lastIndexOf("/"))}/">Наверх/</a><br>
     </div>
     <div class="row">
         <div class="column">
             <span class="b">Директория</span>
             <ul class="flex-column flex ma0 pa0">
-                <c:forEach var="directory" items="${directories}">
+                <c:forEach var="directory" items="${requestScope.directories}">
                     <div class="item">
                         <i data-feather="folder" class="red icon"></i>
                         <a href="./?path=${directory.file.getAbsolutePath().replace('\\', '/')}"
                            class="ml2">${directory.file.getName()}/</a>
                     </div>
                 </c:forEach>
-                <c:forEach var="file" items="${files}">
+                <c:forEach var="file" items="${requestScope.files}">
                     <div class="item">
                         <i data-feather="file" class="yellow icon"></i>
                         <a href="./?path=${file.file.getAbsolutePath().replace('\\', '/')}"
@@ -105,12 +105,12 @@
         <div class="column">
             <span class="b">Размер (в байтах)</span>
             <ul class="flex-column flex ma0 pa0">
-                <c:forEach var="directory" items="${directories}">
+                <c:forEach var="directory" items="${requestScope.directories}">
                     <li class="item">
                         <span>${directory.length}</span>
                     </li>
                 </c:forEach>
-                <c:forEach var="file" items="${files}">
+                <c:forEach var="file" items="${requestScope.files}">
                     <li class="item">
                         <span>${file.length}</span>
                     </li>
@@ -120,12 +120,12 @@
         <div class="column">
             <span class="b">Дата изменения</span>
             <ul class="flex-column flex ma0 pa0">
-                <c:forEach var="directory" items="${directories}">
+                <c:forEach var="directory" items="${requestScope.directories}">
                     <li class="item">
                         <span>${directory.lastModified}</span>
                     </li>
                 </c:forEach>
-                <c:forEach var="file" items="${files}">
+                <c:forEach var="file" items="${requestScope.files}">
                     <li class="item">
                         <span>${file.lastModified}</span>
                     </li>
