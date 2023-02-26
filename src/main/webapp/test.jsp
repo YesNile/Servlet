@@ -1,4 +1,4 @@
-<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html>
@@ -80,7 +80,7 @@
 <div class="container">
     <div class="up-btn">
         <i data-feather="arrow-up-circle" class="icon"></i>
-        <a href="?path=${requestScope.path.replace('\\', '/').substring(0,requestScope.path.lastIndexOf("/"))}/">Наверх/</a><br>
+        <a href="?path=${requestScope.path.getParent().toFile().getAbsolutePath().substring(0,requestScope.path.getParent().toFile().getAbsolutePath().lastIndexOf("\\")).replace('\\', '/')}/">Наверх/</a><br>
     </div>
     <div class="row">
         <div class="column">
@@ -89,14 +89,14 @@
                 <c:forEach var="directory" items="${requestScope.directories}">
                     <div class="item">
                         <i data-feather="folder" class="red icon"></i>
-                        <a href="./?path=${directory.file.getAbsolutePath().replace('\\', '/')}"
+                        <a href="./?path=${directory.file.getAbsolutePath().split("JavaServlet")[1].replace('\\', '/')}"
                            class="ml2">${directory.file.getName()}/</a>
                     </div>
                 </c:forEach>
                 <c:forEach var="file" items="${requestScope.files}">
                     <div class="item">
                         <i data-feather="file" class="yellow icon"></i>
-                        <a href="./?path=${file.file.getAbsolutePath().replace('\\', '/')}"
+                        <a href="./?path=${file.file.getAbsolutePath().split("JavaServlet")[1].replace('\\', '/')}"
                            class="ml2">${file.file.getName()}</a>
                     </div>
                 </c:forEach>

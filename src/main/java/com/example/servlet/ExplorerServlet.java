@@ -1,10 +1,12 @@
 package com.example.servlet;
 
 import com.example.servlet.model.Model;
+import com.example.servlet.model.User;
 
 import javax.servlet.annotation.WebServlet;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -19,39 +21,47 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Objects;
 
-@WebServlet("/")
+@WebServlet(urlPatterns = {"/"})
 public class ExplorerServlet extends HttpServlet {
+    private final ExplorerService explorerService = new ExplorerService();
+    private final UserService userService = UserService.getService();
+
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("text/html");
         request.setAttribute("date", LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy hh:mm:ss")));
 
-        String pathVariable = request.getParameter("path");
+        User user = userService.getUserFromCookie(request.getSession().getId());
 
-        if (pathVariable == null || pathVariable.equals("")) {
-            pathVariable = File.listRoots()[0].getAbsolutePath();
+        if (user == null) {
+            response.sendRedirect("/login");
+            return;
         }
-        pathVariable = pathVariable.replaceAll("%20", " ");
 
-        File file = readFile(pathVariable);
-        request.setAttribute("path", file.getAbsolutePath());
+        String pathVariable = request.getParameter("path");
+        File file = explorerService.getUserFiles(user.getLogin(), pathVariable);
+
+        System.out.println(request.getQueryString());
+        request.setAttribute("path", file.toPath());
 
         if (file.isDirectory()) {
-            Model[] files = getSubFile(file);
-            Model[] directories = getSubDirectory(file);
-
-
-            request.setAttribute("files", files);
-            request.setAttribute("directories", directories);
-
-
-            request.getRequestDispatcher("test.jsp").forward(request, response);
-        }else {
+            showExplorer(file, request, response);
+        } else {
             downloadFile(response, file);
         }
     }
 
-    private void downloadFile(HttpServletResponse resp, File file) throws IOException {
+    private void showExplorer(File file, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        Model[] files = explorerService.getSubFile(file);
+        Model[] directories = explorerService.getSubDirectory(file);
+
+        request.setAttribute("files", files);
+        request.setAttribute("directories", directories);
+
+        request.getRequestDispatcher("test.jsp").forward(request, response);
+    }
+
+    private void downloadFile(HttpServletResponse resp, File file) {
         resp.setContentType("text/html");
         resp.setHeader("Content-disposition", "attachment; filename=" + file.getName());
 
@@ -68,21 +78,16 @@ public class ExplorerServlet extends HttpServlet {
         }
     }
 
-    private Model[] getSubDirectory(File file) {
-        return Arrays.stream(Objects.requireNonNull(file.listFiles()))
-                .filter(File::isDirectory)
-                .map(x -> new Model(x, x.length(), new Date(x.lastModified())))
-                .toArray(Model[]::new);
-    }
-
-    private Model[] getSubFile(File file) {
-        return Arrays.stream(Objects.requireNonNull(file.listFiles()))
-                .filter(File::isFile)
-                .map(x -> new Model(x, x.length(), new Date(x.lastModified())))
-                .toArray(Model[]::new);
-    }
-
-    private File readFile(String path) {
-        return new File(path);
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        Cookie[] cookies = req.getCookies();
+        userService.removeSession(req.getSession().getId());
+        for (Cookie cookie : cookies) {
+            cookie.setValue("");
+            cookie.setPath("/");
+            cookie.setMaxAge(0);
+            resp.addCookie(cookie);
+        }
+        resp.sendRedirect("/login");
     }
 }

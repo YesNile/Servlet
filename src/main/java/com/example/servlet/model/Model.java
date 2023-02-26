@@ -6,9 +6,9 @@ import java.util.Date;
 public class Model {
     private final File file;
     private final long length;
-    private final Date lastModified;
+    private final String lastModified;
 
-    public Date getLastModified() {
+    public String getLastModified() {
         return lastModified;
     }
 
@@ -20,7 +20,7 @@ public class Model {
         return length;
     }
 
-    public Model(File file, long length, Date lastModified) {
+    public Model(File file, long length, String lastModified) {
         this.file = file;
         this.length = length;
         this.lastModified = lastModified;
