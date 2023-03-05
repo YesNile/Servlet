@@ -1,9 +1,24 @@
 package com.example.servlet.model;
+
+import org.hibernate.annotations.NaturalId;
+
+import javax.persistence.*;
+
+@Entity
+@Table(name = "users")
 public class User {
+    @Column(name = "login")
+    @NaturalId
     private String login;
+    @Column(name = "password")
     private String password;
+    @Column(name = "email")
     private String email;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private int id;
+
 
     public User(String login, String password, String email) {
         this.login = login;
@@ -14,6 +29,10 @@ public class User {
     public User(String login, String password) {
         this.login = login;
         this.password = password;
+    }
+
+    public User() {
+
     }
 
     public String getLogin() {

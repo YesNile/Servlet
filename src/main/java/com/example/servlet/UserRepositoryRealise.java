@@ -3,7 +3,6 @@ package com.example.servlet;
 
 import com.example.servlet.model.User;
 
-import javax.servlet.http.Cookie;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,8 +16,15 @@ public class UserRepositoryRealise implements UserRepository {
     }
 
     @Override
-    public void delete(User user) {
-        users.remove(user.getLogin());
+    public User find(Integer id) {
+        User user = null;
+        for (User userDto : users.values()) {
+            if (userDto.getId() == id) {
+                user = userDto;
+                break;
+            }
+        }
+        return user;
     }
 
     @Override
@@ -26,34 +32,10 @@ public class UserRepositoryRealise implements UserRepository {
         return users.get(login);
     }
 
-    @Override
-    public User getUserFromCookie(Cookie[] cookies) {
-        String login = null;
-        String password = null;
-        String email = null;
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if (cookie.getName().equals("login")) {
-                    login = cookie.getValue();
-                }
-                if (cookie.getName().equals("password")) {
-                    password = cookie.getValue();
-                }
-                if (cookie.getName().equals("email")) {
-                    email = cookie.getValue();
-                }
-            }
-            if (login != null && password != null && email != null) {
-                return new User(login, password, email);
-            }
-        }
-
-        return null;
+    private UserRepositoryRealise() {
     }
 
-    private UserRepositoryRealise() {}
-
-    public static UserRepository getUserRepository() {
+    public static UserRepository getRepository() {
         if (repository == null) {
             repository = new UserRepositoryRealise();
         }

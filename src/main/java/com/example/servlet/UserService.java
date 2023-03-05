@@ -1,12 +1,14 @@
 package com.example.servlet;
 
+
 import com.example.servlet.model.User;
+
 import javax.servlet.http.Cookie;
 import java.util.HashMap;
 import java.util.Map;
 
 public class UserService {
-    private final UserRepository repository = SqlRepo.getUserRepository();
+    private final UserRepository repository = HibernateUserRepo.getRepository();
     private final Map<String, User> sessionList = new HashMap<>();
     private static UserService service;
 
@@ -48,4 +50,5 @@ public class UserService {
     public User getUserFromCookie(String session) {
         return sessionList.get(session);
     }
+
 }

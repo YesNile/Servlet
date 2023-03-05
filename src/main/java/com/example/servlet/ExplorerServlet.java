@@ -41,7 +41,6 @@ public class ExplorerServlet extends HttpServlet {
         String pathVariable = request.getParameter("path");
         File file = explorerService.getUserFiles(user.getLogin(), pathVariable);
 
-        System.out.println(request.getQueryString());
         request.setAttribute("path", file.toPath());
 
         if (file.isDirectory()) {

@@ -6,7 +6,6 @@ import javax.servlet.http.Cookie;
 
 public interface UserRepository {
     void save(User user);
-    void delete(User user);
+    User find(Integer id);
     User find(String login);
-    User getUserFromCookie(Cookie[] cookies);
 }
