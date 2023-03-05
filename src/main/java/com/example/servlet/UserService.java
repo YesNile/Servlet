@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class UserService {
-    private final UserRepository repository = UserRepositoryRealise.getUserRepository();
+    private final UserRepository repository = SqlRepo.getUserRepository();
     private final Map<String, User> sessionList = new HashMap<>();
     private static UserService service;
 
